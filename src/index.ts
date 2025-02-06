@@ -2,7 +2,7 @@
  * @Author: stephenHe
  * @Date: 2025-02-06 16:58:09
  * @LastEditors: stephenHe
- * @LastEditTime: 2025-02-06 17:26:17
+ * @LastEditTime: 2025-02-06 17:37:20
  * @Description: 脚手架的入口文件
  * @FilePath: /my-create-vite/src/index.ts
  */
@@ -72,12 +72,84 @@ async function init() {
   // 用户输入的项目目录，也就是项目名
   let targetDir = argTargetDir || defaultTargetDir;
 
-  // 3：开始交互式命令行
+  // 3：框架的配置项
+  type Framework = {
+    // 框架名
+    name: string;
+    // 框架展示名字
+    display: string;
+    color: Function;
+    // 每个框架下的变种
+    variants: FrameworkVariant[];
+  };
+
+  type FrameworkVariant = {
+    name: string;
+    display: string;
+    color: Function;
+    customCommand?: string;
+  };
+
+  const FRAMEWORKS: Framework[] = [
+    {
+      name: "vue",
+      display: "Vue",
+      color: chalk.green,
+      variants: [
+        {
+          name: "vue-ts",
+          display: "TypeScript",
+          color: chalk.blue,
+        },
+        {
+          name: "vue",
+          display: "JavaScript",
+          color: chalk.yellow,
+        },
+      ],
+    },
+    {
+      name: "react",
+      display: "React",
+      color: chalk.cyan,
+      variants: [
+        {
+          name: "react-ts",
+          display: "TypeScript",
+          color: chalk.blue,
+        },
+        {
+          name: "react-swc-ts",
+          display: "TypeScript + SWC",
+          color: chalk.blue,
+        },
+        {
+          name: "react",
+          display: "JavaScript",
+          color: chalk.yellow,
+        },
+        {
+          name: "react-swc",
+          display: "JavaScript + SWC",
+          color: chalk.yellow,
+        },
+      ],
+    },
+  ];
+
+  const TEMPLATES = FRAMEWORKS.map((f) => {
+    return f.variants?.map((v) => v.name);
+  }).reduce((a, b) => {
+    return a.concat(b);
+  }, []);
+
+  // 4：开始交互式命令行
   let result: prompts.Answers<"projectName">;
 
   try {
     result = await prompts(
       [
+        // 项目名字
         {
           type: argTargetDir ? null : "text",
           name: "projectName",
@@ -86,6 +158,36 @@ async function init() {
           onState: (state) => {
             targetDir = formatTargetDir(state.value) || defaultTargetDir;
           },
+        },
+        // 框架选择
+        {
+          type:
+            argTemplate && TEMPLATES.includes(argTemplate) ? null : "select",
+          name: "framework",
+          message: chalk.reset("Select a framework:"),
+          initial: 0,
+          choices: FRAMEWORKS.map((framework) => {
+            const frameworkColor = framework.color;
+            return {
+              title: frameworkColor(framework.display || framework.name),
+              value: framework,
+            };
+          }),
+        },
+        // 每个框架下面的选项
+        {
+          type: (framework: Framework) =>
+            framework && framework.variants ? "select" : null,
+          name: "variant",
+          message: chalk.reset("Select a variant:"),
+          choices: (framework: Framework) =>
+            framework.variants.map((variant) => {
+              const variantColor = variant.color;
+              return {
+                title: variantColor(variant.display || variant.name),
+                value: variant.name,
+              };
+            }),
         },
       ],
       {
