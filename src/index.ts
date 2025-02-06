@@ -2,7 +2,7 @@
  * @Author: stephenHe
  * @Date: 2025-02-06 16:58:09
  * @LastEditors: stephenHe
- * @LastEditTime: 2025-02-06 17:37:20
+ * @LastEditTime: 2025-02-06 17:49:16
  * @Description: 脚手架的入口文件
  * @FilePath: /my-create-vite/src/index.ts
  */
@@ -67,6 +67,7 @@ async function init() {
   // npx my-create-vite aaa 因为传入了名字就不需要写名字了
   const argTargetDir = formatTargetDir(argv._[0]);
   console.log(argv);
+  // 传入的模板名字 --template react-ts 就是react-ts
   const argTemplate = argv.template || argv.t;
 
   // 用户输入的项目目录，也就是项目名
@@ -146,6 +147,7 @@ async function init() {
   // 4：开始交互式命令行
   let result: prompts.Answers<"projectName">;
 
+  // type为null的时候就不会展示。
   try {
     result = await prompts(
       [
@@ -160,6 +162,7 @@ async function init() {
           },
         },
         // 框架选择
+        // 如果写了 --template react-ts 就不会展示这个选项
         {
           type:
             argTemplate && TEMPLATES.includes(argTemplate) ? null : "select",
