@@ -1,0 +1,24 @@
+{
+  "name": "my-create-vite",
+  "version": "1.0.0",
+  "description": "自己手动实现create-vite脚手架",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "minimist": "^1.2.8",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/minimist": "^1.2.5",
+    "@types/node": "^22.13.1",
+    "@types/prompts": "^2.4.9",
+    "typescript": "^5.7.3"
+  }
+}
