@@ -2,7 +2,7 @@
  * @Author: stephenHe
  * @Date: 2025-02-06 16:58:09
  * @LastEditors: stephenHe
- * @LastEditTime: 2025-02-07 10:58:33
+ * @LastEditTime: 2025-02-07 13:56:13
  * @Description: 脚手架的入口文件
  * @FilePath: /my-create-vite/src/index.ts
  */
@@ -12,7 +12,9 @@ import minimist from "minimist";
 import prompts from "prompts";
 
 import path from "node:path";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
+import fsExtra from "fs-extra";
 
 // 支持 help、template 两个选项，并且有别名 h 和 t
 // 会生成一个对应的对象，命令行的参数都会被解析到这个对象中。别名的值是boolean。如果后面不传参数的话。
@@ -212,15 +214,15 @@ async function init() {
     variant: string;
   };
 
-  // 5：开始创建
+  // 5：获取最终要生成的目录（输入的项目名字）
 
-  // 获取当前执行命令的目录，拼接上目标目录。
+  // 获取当前执行命令的目录，拼接上目标目录。 最终生成目录
   // process.cwd() 返回执行当前命令的目录
   const root = path.join(process.cwd(), targetDir);
   let template: string = variant || argTemplate;
   console.log(`\nScaffolding project in ${root}...`);
 
-  // 获取模板文件的文件夹地址。
+  // 6：获取选择的模板文件的文件夹地址。
   // import.meta.url 就是当前文件的路径、不过是 file:/// 开头的，所以需要转换一下
   // file:///Users/stephen/project-self/my-create-vite/dist/index.js
   // Users/stephen/project-self/my-create-vite/template-vue-ts
@@ -230,7 +232,30 @@ async function init() {
     `template-${template}`
   );
 
-  console.log(import.meta.url, templateDir);
+  // 7：复制模板到对应的目录中。
+  // 7-1: 检查目标目录是否存在,不存在就创建
+  if (!fs.existsSync(root)) {
+    fs.mkdirSync(root, { recursive: true });
+  }
+  // 7-2: 复制模板文件到目标目录
+  fsExtra
+    .copy(templateDir, root)
+    .then(() => {
+      // 是拿到从 a 目录到 b 目录的相对路径。
+      const cdProjectName = path.relative(process.cwd(), root);
+      console.log(`\nDone. Now run:\n`);
+      if (root !== process.cwd()) {
+        console.log(
+          `  cd ${
+            cdProjectName.includes(" ") ? `"${cdProjectName}"` : cdProjectName
+          }`
+        );
+      }
+      console.log(`  npm install`);
+      console.log(`  npm run dev`);
+      console.log();
+    })
+    .catch((err) => console.error(err));
 }
 
 init().catch((e) => {
