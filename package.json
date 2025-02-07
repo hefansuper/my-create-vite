@@ -1,6 +1,6 @@
 {
   "name": "my-create-vite-stephen",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "自己手动实现create-vite脚手架",
   "main": "dist/index.js",
   "module": "dist/index.js",
