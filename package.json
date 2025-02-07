@@ -1,9 +1,13 @@
 {
-  "name": "my-create-vite",
+  "name": "my-create-vite-stephen",
   "version": "1.0.0",
   "description": "自己手动实现create-vite脚手架",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "type": "module",
+  "bin": {
+    "my-create-vite-stephen": "./dist/index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,5 +26,10 @@
     "@types/node": "^22.13.1",
     "@types/prompts": "^2.4.9",
     "typescript": "^5.7.3"
-  }
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ]
 }

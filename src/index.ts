@@ -1,11 +1,4 @@
-/*
- * @Author: stephenHe
- * @Date: 2025-02-06 16:58:09
- * @LastEditors: stephenHe
- * @LastEditTime: 2025-02-07 13:56:13
- * @Description: 脚手架的入口文件
- * @FilePath: /my-create-vite/src/index.ts
- */
+#!/usr/bin/env node
 
 import chalk from "chalk";
 import minimist from "minimist";
@@ -71,7 +64,7 @@ async function init() {
   // npx my-create-vite 就让输入文件名字
   // npx my-create-vite aaa 因为传入了名字就不需要写名字了
   const argTargetDir = formatTargetDir(argv._[0]);
-  console.log(argv);
+  // console.log(argv);
   // 传入的模板名字 --template react-ts 就是react-ts
   const argTemplate = argv.template || argv.t;
 
