@@ -2,7 +2,7 @@
  * @Author: stephenHe
  * @Date: 2025-02-06 16:58:09
  * @LastEditors: stephenHe
- * @LastEditTime: 2025-02-06 17:49:16
+ * @LastEditTime: 2025-02-07 10:58:33
  * @Description: 脚手架的入口文件
  * @FilePath: /my-create-vite/src/index.ts
  */
@@ -10,6 +10,9 @@
 import chalk from "chalk";
 import minimist from "minimist";
 import prompts from "prompts";
+
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 // 支持 help、template 两个选项，并且有别名 h 和 t
 // 会生成一个对应的对象，命令行的参数都会被解析到这个对象中。别名的值是boolean。如果后面不传参数的话。
@@ -204,7 +207,30 @@ async function init() {
     return;
   }
 
-  console.log("result", result);
+  const { framework, variant } = result as unknown as {
+    framework: string;
+    variant: string;
+  };
+
+  // 5：开始创建
+
+  // 获取当前执行命令的目录，拼接上目标目录。
+  // process.cwd() 返回执行当前命令的目录
+  const root = path.join(process.cwd(), targetDir);
+  let template: string = variant || argTemplate;
+  console.log(`\nScaffolding project in ${root}...`);
+
+  // 获取模板文件的文件夹地址。
+  // import.meta.url 就是当前文件的路径、不过是 file:/// 开头的，所以需要转换一下
+  // file:///Users/stephen/project-self/my-create-vite/dist/index.js
+  // Users/stephen/project-self/my-create-vite/template-vue-ts
+  const templateDir = path.resolve(
+    fileURLToPath(import.meta.url),
+    "../..",
+    `template-${template}`
+  );
+
+  console.log(import.meta.url, templateDir);
 }
 
 init().catch((e) => {
